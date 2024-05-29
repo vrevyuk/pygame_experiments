@@ -9,7 +9,8 @@ class PyScope:
     screen = None;
 
     def __init__(self):
-        os.environ["SDL_FBDEV"] = "/dev/fbt"
+        os.environ['SDL_AUDIODRIVER'] = 'dsp'
+        os.environ["SDL_FBDEV"] = "/dev/fb0"
         os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"  # Use touchscreen instead of event0
         os.environ["SDL_MOUSEDRV"] = "TSLIB"
 
