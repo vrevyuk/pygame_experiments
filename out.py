@@ -13,6 +13,7 @@ class PyScope:
         os.environ["SDL_FBDEV"] = "/dev/fb0"
         os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"  # Use touchscreen instead of event0
         os.environ["SDL_MOUSEDRV"] = "TSLIB"
+        os.environ["DISPLAY"] = ":0"
 
         # Based on "Python GUI in Linux frame buffer"
         # http://www.karoltomala.com/blog/?p=679
