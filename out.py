@@ -1,64 +1,54 @@
+import os
 import pygame
 import time
-import os
-
-DEBUG = True
 
 
-class PyScope:
+class pyscope:
     screen = None;
 
     def __init__(self):
-        os.environ['SDL_AUDIODRIVER'] = 'dsp'
-        os.environ["SDL_FBDEV"] = "/dev/fb0"
-        os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"  # Use touchscreen instead of event0
-        os.environ["SDL_MOUSEDRV"] = "TSLIB"
-        # os.environ["DISPLAY"] = ":0"
-
+        "Ininitializes a new pygame screen using the framebuffer"
         # Based on "Python GUI in Linux frame buffer"
         # http://www.karoltomala.com/blog/?p=679
+
+        # Allow running from ssh
+        os.putenv("DISPLAY", ":0")
+
         disp_no = os.getenv("DISPLAY")
         if disp_no:
-            if DEBUG:
-                print("I'm running under X display = {0}".format(disp_no))
+            print("I'm running under X display = {0}".format(disp_no))
 
         # Check which frame buffer drivers are available
         # Start with fbcon since directfb hangs with composite output
-        drivers = ['x11', 'fbcon', 'directfb', 'svgalib', 'dummy']
+        drivers = ['x11', 'fbcon', 'directfb', 'svgalib']
         found = False
         for driver in drivers:
+            # Make sure that SDL_VIDEODRIVER is set
             if not os.getenv('SDL_VIDEODRIVER'):
                 os.putenv('SDL_VIDEODRIVER', driver)
             try:
                 pygame.display.init()
-                print('Driver: {0} success.'.format(driver))
             except pygame.error:
-                if DEBUG:
-                    print('Driver: {0} failed.'.format(driver))
-                os.putenv('SDL_VIDEODRIVER', '')
+                print("Driver: {0} failed.".format(driver))
                 continue
             found = True
             break
 
         if not found:
-            print('No suitable video driver found!')
-            # exit(1)
-
-        pygame.init()
+            raise Exception('No suitable video driver found!')
 
         size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
-        if DEBUG:
-            print("Framebuffer size: %d x %d" % (size[0], size[1]))
+        print("Framebuffer size: %d x %d" % (size[0], size[1]))
         self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
         # Clear the screen to start
-        self.screen.fill((100, 100, 100))
+        self.screen.fill((0, 0, 0))
         # Initialise font support
         pygame.font.init()
         # Render the screen
         pygame.display.update()
 
     def __del__(self):
-        pygame.display.quit()
+        "Destructor to make sure pygame shuts down, etc."
 
     def test(self):
         # Fill the screen with red (255, 0, 0)
@@ -68,11 +58,7 @@ class PyScope:
         pygame.display.update()
 
 
-def main():
-    pyscope = PyScope()
-    pyscope.test()
-    time.sleep(4)
-
-
-if __name__ == "__main__":
-    main()
+# Create an instance of the PyScope class
+scope = pyscope()
+scope.test()
+time.sleep(10)
