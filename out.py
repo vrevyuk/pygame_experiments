@@ -28,6 +28,7 @@ class pyscope:
                 os.putenv('SDL_VIDEODRIVER', driver)
             try:
                 pygame.display.init()
+                print("Driver: {0} success.".format(driver))
             except pygame.error:
                 print("Driver: {0} failed.".format(driver))
                 continue
