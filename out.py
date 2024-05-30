@@ -13,7 +13,7 @@ class PyScope:
         os.environ["SDL_FBDEV"] = "/dev/fb0"
         os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"  # Use touchscreen instead of event0
         os.environ["SDL_MOUSEDRV"] = "TSLIB"
-        os.environ["DISPLAY"] = ":0"
+        # os.environ["DISPLAY"] = ":0"
 
         # Based on "Python GUI in Linux frame buffer"
         # http://www.karoltomala.com/blog/?p=679
@@ -24,20 +24,21 @@ class PyScope:
 
         # Check which frame buffer drivers are available
         # Start with fbcon since directfb hangs with composite output
-        drivers = ['x11', 'fbcon', 'directfb', 'svgalib']
+        drivers = ['x11', 'fbcon', 'directfb', 'svgalib', 'dummy']
         found = False
-        # for driver in drivers:
-        #     if not os.getenv('SDL_VIDEODRIVER'):
-        #         os.putenv('SDL_VIDEODRIVER', driver)
-        #     # try:
-        #     #     pygame.display.init()
-        #     # except pygame.error:
-        #     #     if DEBUG:
-        #     #         print('Driver: {0} failed.'.format(driver))
-        #     #     os.putenv('SDL_VIDEODRIVER', '')
-        #     #     continue
-        #     found = True
-        #     break
+        for driver in drivers:
+            if not os.getenv('SDL_VIDEODRIVER'):
+                os.putenv('SDL_VIDEODRIVER', driver)
+            try:
+                pygame.display.init()
+                print('Driver: {0} success.'.format(driver))
+            except pygame.error:
+                if DEBUG:
+                    print('Driver: {0} failed.'.format(driver))
+                os.putenv('SDL_VIDEODRIVER', '')
+                continue
+            found = True
+            break
 
         if not found:
             print('No suitable video driver found!')
